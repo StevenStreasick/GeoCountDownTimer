@@ -6,7 +6,9 @@ import java.util.Scanner;
 
 /*****************************************************************
 @author Steven Streasick
-@version Winter 2022
+@version Winter 2023
+Originally written as a class project, this project has been updated as of 4/6/2023 to be 'never-nested'
+No other changes have been made since the due date.
 *****************************************************************/
 public class GeoCountDownTimer {
 
@@ -23,50 +25,48 @@ public class GeoCountDownTimer {
     }
 
     public GeoCountDownTimer(int year, int month, int day) {
-        if(isValidDate(year, month, day)) {
-            this.month = month;
-            this.day = day;
-            this.year = year;
-        } else {
+        if(!isValidDate(year, month, day))
             throw new IllegalArgumentException();
-        }
+
+        this.month = month;
+        this.day = day;
+        this.year = year;
+       
     }
    
     public GeoCountDownTimer(GeoCountDownTimer other) {
-        if (other != null) {
-            if(isValidDate(other.year, other.month, other.day)) {
-                this.month = other.month;
-                this.day = other.day;
-                this.year = other.year;
-            } else {
-                throw new IllegalArgumentException();
-            }
-        } else {
+        if (other == null) 
             throw new IllegalArgumentException();
-        }
+
+        if(! isValidDate(other.year, other.month, other.day))
+            throw new IllegalArgumentException();
+
+        this.month = other.month;
+        this.day = other.day;
+        this.year = other.year;
+            
     }
 
     public GeoCountDownTimer(String geoDate) {
-        if (isStringValidDate(geoDate)) {
-            String[] date =  geoDate.split("/"); //Month, day, year
-
-            if ((date.length == 3)) {
-                int newMonth = Integer.parseInt(date[0]);
-                int newDay = Integer.parseInt(date[1]);
-                int newYear = Integer.parseInt(date[2]);
-                if (isValidDate(newYear, newMonth, newDay)) {
-                    this.day = newDay;
-                    this.month = newMonth;
-                    this.year = newYear;
-                } else {
-                    throw new IllegalArgumentException();
-                }
-            } else{
-                throw new IllegalArgumentException();
-            }
-        } else {
+        if (!isStringValidDate(geoDate)) 
             throw new IllegalArgumentException();
-        }
+
+        String[] date =  geoDate.split("/"); //Month, day, year
+
+        if (!(date.length == 3)) 
+            throw new IllegalArgumentException();
+
+        int newMonth = Integer.parseInt(date[0]);
+        int newDay = Integer.parseInt(date[1]);
+        int newYear = Integer.parseInt(date[2]);
+
+        if (!isValidDate(newYear, newMonth, newDay)) 
+            throw new IllegalArgumentException();
+
+        this.day = newDay;
+        this.month = newMonth;
+        this.year = newYear;
+      
     }
     
     /** Determines whether a string contains a date or not. Note: Does not check if a date is valid, just if a string contains a date.
@@ -80,7 +80,9 @@ public class GeoCountDownTimer {
             validity = false;
             return validity;
         }
+        
         char[] acceptableCharacters = {'/', '0', '1','2','3','4','5','6','7','8','9'};
+        
         for(int i = 0; i < string.length(); i++) {
             boolean bool = true;
             for( int i_ = 0; i_ < acceptableCharacters.length; i_++) {
@@ -93,6 +95,7 @@ public class GeoCountDownTimer {
                 return validity;
             } 
         }
+
         return validity;
     }
     
@@ -183,15 +186,16 @@ public class GeoCountDownTimer {
      * @return boolean
      */
     public boolean equals(Object other) {
-        if( other instanceof GeoCountDownTimer) {
-            GeoCountDownTimer otherTimer = (GeoCountDownTimer) other;
-       
-            return ((this.month == otherTimer.month) && (this.year == otherTimer.year) &&
-                (this.day == otherTimer.day));
-   
-        } else {
+        if(!(other instanceof GeoCountDownTimer)) 
             throw new IllegalArgumentException();
-        }
+
+
+        GeoCountDownTimer otherTimer = (GeoCountDownTimer) other;
+    
+        return ((this.month == otherTimer.month) && (this.year == otherTimer.year) &&
+            (this.day == otherTimer.day));
+   
+       
     }
 
     
@@ -268,6 +272,7 @@ public class GeoCountDownTimer {
         if(days < 0) {
             throw new IllegalArgumentException();
         }
+
         while (days > 0) { 
             
             if(isValidDate(year, 2, 29)) {
@@ -296,39 +301,37 @@ public class GeoCountDownTimer {
     public int daysToGo(String fromDate) {
         int dayCount = 0;
 
-        if(isStringValidDate(fromDate)) {
-
-            String[] date =  fromDate.split("/"); //Month, day, year
-                        
-            if ((date.length == 3)) {
-                int passedMonth = Integer.parseInt(date[0]);
-                int passedDay = Integer.parseInt(date[1]);
-                int passedYear = Integer.parseInt(date[2]);
-
-                GeoCountDownTimer fromDateTimer = new GeoCountDownTimer(passedYear, passedMonth, passedDay);
-                if(compareTo(fromDateTimer) != 0) {
-                    while (true) {
-                        int fromTimer = compareTo(fromDateTimer);
-                        if (this.month == passedMonth && this.day == passedDay && this.year == passedYear) {
-                            break;
-                        }
-                        
-                        int[] param = {passedYear, passedMonth, passedDay += fromTimer};
-                        int[] newDate = handleDateOverflow(param);
-
-                        dayCount += fromTimer;
-
-                        passedYear = newDate[0];
-                        passedMonth = newDate[1];
-                        passedDay = newDate[2];
-                    }
-                }
-            } else {
-                throw new IllegalArgumentException();
-            }
-        } else {
+        if(!isStringValidDate(fromDate)) 
             throw new IllegalArgumentException();
+
+
+        String[] date =  fromDate.split("/"); //Month, day, year
+                    
+        if (!(date.length == 3)) 
+            throw new IllegalArgumentException();
+
+        int passedMonth = Integer.parseInt(date[0]);
+        int passedDay = Integer.parseInt(date[1]);
+        int passedYear = Integer.parseInt(date[2]);
+
+        GeoCountDownTimer fromDateTimer = new GeoCountDownTimer(passedYear, passedMonth, passedDay);
+        
+        if(compareTo(fromDateTimer) != 0) {
+            while (!(this.month == passedMonth && this.day == passedDay && this.year == passedYear)) {
+                int fromTimer = compareTo(fromDateTimer);
+                
+                int[] param = {passedYear, passedMonth, passedDay += fromTimer};
+                int[] newDate = handleDateOverflow(param);
+
+                dayCount += fromTimer;
+
+                passedYear = newDate[0];
+                passedMonth = newDate[1];
+                passedDay = newDate[2];
+            }
         }
+            
+       
         
         return dayCount;
     }
@@ -401,11 +404,11 @@ public class GeoCountDownTimer {
      * @param day
      */
     public void setDay(int day) {
-        if(isValidDate(year, month, day)) {
-            this.day = day;
-        } else {
+        if(!isValidDate(year, month, day)) 
             throw new IllegalArgumentException();
-        }
+
+        this.day = day;
+       
         
     } 
     
@@ -414,11 +417,11 @@ public class GeoCountDownTimer {
      * @param month
      */
     public void setMonth(int month) {
-        if(isValidDate(year, month, day)) {
-            this.month = month;
-        } else {
-            throw new IllegalArgumentException();
-        }
+        if(isValidDate(year, month, day)) 
+           throw new IllegalArgumentException();
+
+        this.month = month;
+       
     }
     
     /** Sets the year
@@ -426,11 +429,11 @@ public class GeoCountDownTimer {
      */
     public void setYear(int year) {
         
-        if(isValidDate(year, month, day)) {
-            this.year = year;
-        } else {
+        if(isValidDate(year, month, day)) 
             throw new IllegalArgumentException();
-        }
+
+        this.year = year;
+       
 
     }
     
@@ -477,23 +480,22 @@ public class GeoCountDownTimer {
             String[] date =  str.split(" ");
 
             scnr.close();            
-            if(date.length == 3) {
-                int day = Integer.parseInt(date[1]);
-                int month = Integer.parseInt(date[0]);
-                int year = Integer.parseInt(date[2]);
-
-                if(isValidDate(year, month, day)) {
-
-                    this.day = day;
-                    this.month = month;
-                    this.year = year;
-
-                }else {
-                    throw new IllegalArgumentException();
-                }
-            } else {
+            if(!(date.length == 3)) 
                 throw new IllegalArgumentException();
-            }
+
+            int day = Integer.parseInt(date[1]);
+            int month = Integer.parseInt(date[0]);
+            int year = Integer.parseInt(date[2]);
+
+            if(!isValidDate(year, month, day)) 
+                throw new IllegalArgumentException();
+
+
+            this.day = day;
+            this.month = month;
+            this.year = year;
+
+          
         } catch(FileNotFoundException e) {
 
         }
